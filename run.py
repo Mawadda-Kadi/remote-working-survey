@@ -40,9 +40,10 @@ def validate_input_range(num, min_value, max_value):
         # to ensure first that the input is an int
         user_input = validate_numeric_input(num)
         # to ensure that the input is within the specified range
-        if min_value <= user_input <= max_value:
-            return user_input
-        else:
+        try:
+            if min_value <= user_input <= max_value:
+                return user_input
+        except ValueError:
             print(f"Please enter a value between {min_value} and {max_value}")
 
 
@@ -67,8 +68,11 @@ the input function, and then validiate the user's input based on the
 provided validation function """
 
 for question_id, question, validation_function in questions:
-    user_response = validate_function(question)
+    print(question)
+    user_response = validation_function("")
     responses[question_id] = user_response
+
+print(responses)
 
 
 
