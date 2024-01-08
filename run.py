@@ -23,6 +23,29 @@ responses_sheet = SHEET.worksheet('questions & responses')
 # to get all values form a single worksheet  
 data = responses_sheet.get_all_values() 
 
+""" Functions """
+
+def validate_numeric_input(num):
+    """ Function to validate numeric input """
+    while True:
+        try:
+            user_input = int(input(num))
+            return user_input
+        except ValueError:
+            print("Please enter a valid numeric value")
+
+def validate_input_range(num, min_value, max_value):
+    """ Function to validate input within a specified range """
+    while True:
+        # to ensure first that the input is an int
+        user_input = validate_numeric_input(num)
+        # to ensure that the input is within the specified range
+        if min_value <= user_input <= max_value:
+            return user_input
+        else:
+            print(f"Please enter a value between {min_value} and {max_value}")
+
+
 """ Survey Questions and Validation """
 
 """ This is the questions list. Each question is represented as a tuple,
