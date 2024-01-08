@@ -43,5 +43,10 @@ responses = {}
 the input function, and then validiate the user's input based on the 
 provided validation function """
 
+for question_id, question, validation_function in questions:
+    user_response = validate_function(question)
+    responses[question_id] = user_response
+
+
 
 
