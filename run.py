@@ -43,8 +43,10 @@ def validate_input_range(num, min_value, max_value):
         try:
             if min_value <= user_input <= max_value:
                 return user_input
+            else:
+                print(f"Please enter a value between {min_value} and {max_value}")
         except ValueError:
-            print(f"Please enter a value between {min_value} and {max_value}")
+            print("Please enter a valid numeric value")
 
 
 """ Survey Questions and Validation """
