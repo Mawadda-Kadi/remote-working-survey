@@ -88,8 +88,6 @@ LABELS = {
     'work_life_balance_challenges': {1: 'Yes', 2: 'No'},
     'productivity_improvement': {1: 'Yes', 2: 'No', 3: 'No change'},
     'work_model_preference': {1: 'Yes, I prefer a hybrid model', 2: 'No, I prefer fully remote work', 3: 'No, I prefer fully in-office work', 4: 'Undecided'},
-    'average_daily_work_hours': 'Numeric value in hours',
-    'experience_years': 'Positive integer value'
 }
 
 # to collect survey responses
@@ -107,7 +105,7 @@ for question_id, question, validation_function in questions:
 print(responses)
 
 """ Write responses to the sheet """
-response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", ]}
+response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "experience_years"]}
 update_worksheet(response_values, 'questions&responses')
 
 print("Survey response recorded successfully.../n")
