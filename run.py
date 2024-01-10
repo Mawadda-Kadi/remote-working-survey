@@ -18,7 +18,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('remote_working_survey')
  
 # to select a single worksheet 
-responses_sheet = SHEET.worksheet('questions & responses') 
+responses_sheet = SHEET.worksheet('questions&responses') 
 
 # to get all values form a single worksheet  
 data = responses_sheet.get_all_values() 
@@ -32,7 +32,7 @@ def validate_numeric_input(num):
             user_input = int(input(num))
             return user_input
         except ValueError:
-            print("Please enter a valid numeric value")
+            print("Please enter a valid numeric value\n")
 
 def validate_input_range(num, min_value, max_value):
     """ Function to validate input within a specified range """
@@ -44,9 +44,19 @@ def validate_input_range(num, min_value, max_value):
             if min_value <= user_input <= max_value:
                 return user_input
             else:
-                print(f"Please enter a value between {min_value} and {max_value}")
+                print(f"Please enter a value between {min_value} and {max_value}\n")
         except ValueError:
-            print("Please enter a valid numeric value")
+            print("Please enter a valid numeric value\n")
+
+def update_worksheet(data, worksheet):
+    """
+    Receives a list of integers to be inserted into a worksheet
+    Update the relevant worksheet with the data provided
+    """
+    print(f"Updating {worksheet} worksheet...\n")
+    worksheet_to_update = SHEET.worksheet(worksheet)
+    worksheet_to_update.append_row(data)
+    print(f"{worksheet} worksheet updated successfully\n")
 
 
 """ Survey Questions and Validation """
@@ -76,6 +86,11 @@ for question_id, question, validation_function in questions:
 
 print(responses)
 
+""" Write responses to the sheet """
+response_values = list(responses.values())
+update_worksheet(response_values, 'questions&responses')
+
+print("Survey response recorded successfully.../n")
 
 
 
