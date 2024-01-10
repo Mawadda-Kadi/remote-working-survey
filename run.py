@@ -50,12 +50,14 @@ def validate_input_range(num, min_value, max_value):
 
 def update_worksheet(data, worksheet):
     """
-    Receives a list of integers to be inserted into a worksheet
+    Receives a list of responses to be inserted into a worksheet
     Update the relevant worksheet with the data provided
     """
+    # to map numeric responses to their corresponding labels
+    mapped_data = [LABELS.get(key, {}).get(value, value) for key, value in data.items()]
     print(f"Updating {worksheet} worksheet...\n")
     worksheet_to_update = SHEET.worksheet(worksheet)
-    worksheet_to_update.append_row(data)
+    worksheet_to_update.append_row(mapped_data)
     print(f"{worksheet} worksheet updated successfully\n")
 
 
@@ -72,6 +74,12 @@ questions = [
     ("remote_work_setup", "Which of the following best describes your remote work setup?\n1. Dedicated home office\n2. Shared workspace with others\n3. No dedicated workspace\n", lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3))
 ]
 
+# to define a dictionary to map numeric responses to labels
+LABELS = {
+     'satisfaction': {1: 'Very Satisfied', 2: 'Satisfied', 3: 'Neutral', 4: 'Dissatisfied', 5: 'Very Dissatisfied'},
+    'remote_work_setup': {1: 'Dedicated home office', 2: 'Shared workspace with others', 3: 'No dedicated workspace'},
+}
+
 # to collect survey responses
 responses = {}
 
@@ -81,13 +89,13 @@ provided validation function """
 
 for question_id, question, validation_function in questions:
     print(question)
-    user_response = validation_function("")
+    user_response = validation_function(question)
     responses[question_id] = user_response
 
 print(responses)
 
 """ Write responses to the sheet """
-response_values = list(responses.values())
+response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", ]}
 update_worksheet(response_values, 'questions&responses')
 
 print("Survey response recorded successfully.../n")
