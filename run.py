@@ -77,6 +77,7 @@ questions = [
     ("productivity_improvement", "Have you experienced an improvement in your productivity since working from home?\n1. Yes\n2. No\n3. No change\n", lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3)),
     ("work_model_preference", "Would you prefer a hybrid work model (a mix of remote and in-office work) in the future?\n1. Yes, I prefer a hybrid model\n2. No, I prefer fully remote work\n3. No, I prefer fully in-office work\n4. Undecided\n", lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
     ("average_daily_work_hours", "On average, how many hours per day do you work remotely? [Numeric value in hours]\n", lambda x: validate_input_range("Enter the number of hours: ", 1, 24)),
+    ("work_duration", "How long have you worked remotely?\n1. Less than 6 months\n2. 6 months to 1 year\n3. 1 year to 2 years\n4. More than 2 years\n", lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
     ("experience_years", "How many years of experience do you have in your current role? [Positive integer value]\n", lambda x: validate_input_range("Enter the number of years: ", 1, float('inf')))
 ]
 
@@ -88,6 +89,7 @@ LABELS = {
     'work_life_balance_challenges': {1: 'Yes', 2: 'No'},
     'productivity_improvement': {1: 'Yes', 2: 'No', 3: 'No change'},
     'work_model_preference': {1: 'Yes, I prefer a hybrid model', 2: 'No, I prefer fully remote work', 3: 'No, I prefer fully in-office work', 4: 'Undecided'},
+    'work_duration': {1: 'Less than 6 months', 2: '6 months to 1 year', 3: '1 year to 2 years', 4: 'More than 2 years'}
 }
 
 # to collect survey responses
@@ -105,7 +107,7 @@ for question_id, question, validation_function in questions:
 print(responses)
 
 """ Write responses to the sheet """
-response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "experience_years"]}
+response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "work_duration", "experience_years"]}
 update_worksheet(response_values, 'questions&responses')
 
 print("Survey response recorded successfully.../n")
