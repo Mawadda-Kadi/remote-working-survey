@@ -1,27 +1,26 @@
 import gspread 
-
 from google.oauth2.service_account import Credentials 
 
+# Connect to the Google Spreadsheet
 SCOPE = [ 
     "https://www.googleapis.com/auth/spreadsheets", 
     "https://www.googleapis.com/auth/drive.file", 
     "https://www.googleapis.com/auth/drive" 
     ] 
 
+# Add Credentials
 CREDS = Credentials.from_service_account_file('creds.json') 
-
 SCOPED_CREDS = CREDS.with_scopes(SCOPE) 
-
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS) 
 
-# to open the spread sheet 
+# Open the spreadsheet 
 SHEET = GSPREAD_CLIENT.open('remote_working_survey')
- 
-# to select a single worksheet 
-responses_sheet = SHEET.worksheet('questions&responses') 
-
-# to get all values form a single worksheet  
-data = responses_sheet.get_all_values() 
+# Select a single worksheet 
+RESPONSES_SHEET = SHEET.worksheet('questions&responses')
+DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
+# Get all values form a single worksheet  
+response_data = RESPONSES_SHEET.get_all_values()
+analysis_data = DATA_ANALYSIS_SHEET.get_all_values() 
 
 """ Functions """
 
@@ -37,9 +36,9 @@ def validate_numeric_input(num):
 def validate_input_range(num, min_value, max_value):
     """ Function to validate input within a specified range """
     while True:
-        # to ensure first that the input is an int
+        # Ensure first that the input is an int
         user_input = validate_numeric_input(num)
-        # to ensure that the input is within the specified range
+        # Ensure that the input is within the specified range
         try:
             if min_value <= user_input <= max_value:
                 return user_input
@@ -53,7 +52,7 @@ def update_worksheet(data, worksheet):
     Receives a list of responses to be inserted into a worksheet
     Update the relevant worksheet with the data provided
     """
-    # to map numeric responses to their corresponding labels
+    # Map numeric responses to their corresponding labels
     mapped_data = [LABELS.get(key, {}).get(value, value) for key, value in data.items()]
     print(f"Updating {worksheet} worksheet...\n")
     worksheet_to_update = SHEET.worksheet(worksheet)
@@ -81,7 +80,7 @@ questions = [
     ("experience_years", "How many years of experience do you have in your current role? [Positive integer value]\n", lambda x: validate_input_range("Enter the number of years: ", 1, float('inf')))
 ]
 
-# to define a dictionary to map numeric responses to labels
+# Define a dictionary to map numeric responses to labels
 LABELS = {
     'satisfaction': {1: 'Very Satisfied', 2: 'Satisfied', 3: 'Neutral', 4: 'Dissatisfied', 5: 'Very Dissatisfied'},
     'remote_work_setup': {1: 'Dedicated home office', 2: 'Shared workspace with others', 3: 'No dedicated workspace'},
@@ -92,7 +91,7 @@ LABELS = {
     'work_duration': {1: 'Less than 6 months', 2: '6 months to 1 year', 3: '1 year to 2 years', 4: 'More than 2 years'}
 }
 
-# to collect survey responses
+# Collect survey responses
 responses = {}
 
 """ to iterate through each question and present it to the user using
@@ -110,7 +109,7 @@ print(responses)
 response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "work_duration", "experience_years"]}
 update_worksheet(response_values, 'questions&responses')
 
-print("Survey response recorded successfully.../n")
+print("Survey response recorded successfully...\n")
 
 
 
