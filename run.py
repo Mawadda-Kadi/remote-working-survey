@@ -17,11 +17,8 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 # Open the spreadsheet 
 SHEET = GSPREAD_CLIENT.open('remote_working_survey')
 # Select a single worksheet 
-RESPONSES_SHEET = SHEET.worksheet('questions&responses')
+RESPONSES_SHEET = SHEET.worksheet('responses')
 DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
-# Get all values form a single worksheet  
-response_data = RESPONSES_SHEET.get_all_values()
-analysis_data = DATA_ANALYSIS_SHEET.get_all_values() 
 
 """ Functions """
  
@@ -64,41 +61,35 @@ def validate_input_range(num, min_value, max_value):
             print("Please enter a valid numeric value\n")
 
 def update_worksheet(data, worksheet_name):
-    """  Function to update a specified worksheet with new data """
-
-    """ If it is the 'data_analysis' worksheet, it first clears existing data,
-    preserving the first row (header). It then formats and inserts new data
-    into the worksheet, starting from the second row. The data is formatted
-    depending on its type: dictionary values are broken down into individual rows,
-    while single numeric values are inserted directly """
-
-    worksheet = SHEET.worksheet(worksheet_name)
+    """ Function to update a specified worksheet with new data and
+    appropriately handles both worksheets based on their unique 
+    requirements """
     
-    if worksheet_name == 'data_analysis':
-        # Get the total number of rows in the worksheet
+    worksheet = SHEET.worksheet(worksheet_name)
+
+    if worksheet_name == 'responses':
+        # Map numeric responses to their corresponding labels and append
+        mapped_data = [LABELS.get(key, {}).get(value, value) for key, value in data.items()] 
+        worksheet.append_row(mapped_data)
+
+    elif worksheet_name == 'data_analysis':
+        # Clear and update 'data_analysis' worksheet
         total_rows = len(worksheet.get_all_values())
         if total_rows > 1:
-            # Clear the existing data in the worksheet, except the first row
             range_to_clear = f'A2:Z{total_rows}'
             worksheet.batch_clear([range_to_clear])
-
-    # Initialize a list to store formatted rows
-    formatted_rows = []
-
-    # Iterate through each key-value pair in the data dictionary
-    for key, values in data.items():
-        if isinstance(values, dict):  
-            # For data with subcategories
-            for sub_key, sub_value in values.items():
-                formatted_rows.append([f"{key} - {sub_key}", sub_value])
-        else:  
-            # For single numeric values
-            formatted_rows.append([key, values])
-
-    # Insert the formatted rows into the worksheet, starting from the second row
-    worksheet.insert_rows(formatted_rows, 2)
-
-    print(f"{worksheet_name} worksheet updated successfully")
+        # Initialize a list to store formatted rows
+        formatted_rows = []
+        for key, values in data.items():
+            if isinstance(values, dict):  
+                # For data with subcategories
+                for sub_key, sub_value in values.items():
+                    formatted_rows.append([f"{key} - {sub_key}", sub_value])
+            else:
+                # For single numeric values
+                formatted_rows.append([key, values])
+        worksheet.insert_rows(formatted_rows, 2)
+    print(f"{worksheet_name} worksheet updated successfully\n")
 
 def fetch_data(sheet):
     """ Function to get all data from a particular
@@ -226,7 +217,7 @@ LABELS = {
 def main():
     """ Run all program functions """
     responses = collect_survey_responses(questions)
-    update_worksheet(responses, 'questions&responses')
+    update_worksheet(responses, 'responses')
     all_responses = fetch_data(RESPONSES_SHEET)
     analysis_results = analyze_data(all_responses)
     update_worksheet(analysis_results, 'data_analysis')
