@@ -9,17 +9,6 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
     ]
 
-# Add Credentials
-CREDS = Credentials.from_service_account_file('creds.json')
-SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
-
-# Open the spreadsheet
-SHEET = GSPREAD_CLIENT.open('remote_working_survey')
-# Select a single worksheet
-RESPONSES_SHEET = SHEET.worksheet('responses')
-DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
-
 """ Functions """
 
 
@@ -244,4 +233,23 @@ print("Welcome to Remote Working Survey Analysis\n")
 
 # Ensure to be executed only when the script is run directly
 if __name__ == "__main__":
-    main()
+
+    # Add Credentials
+    CREDS = Credentials.from_service_account_file('creds.json')
+    SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+
+    # Open the spreadsheet
+    SHEET = GSPREAD_CLIENT.open('remote_working_survey')
+    # Select a single worksheet
+    RESPONSES_SHEET = SHEET.worksheet('responses')
+    DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
+    print("Welcome to Remote Working Survey Analysis\n")
+
+    # Program Exit
+    exit_survey = False
+    while exit_survey is False:
+        main()
+        user_input = input("Thank you for your participation,\n"
+                "enter 'exit' to close the program, any key to restart: "/n1)
+        exit_survey = user_input.lower() == 'exit'
