@@ -1,44 +1,50 @@
-import gspread 
+import gspread
 from google.oauth2.service_account import Credentials
 from scipy.stats import pearsonr
 
 # Connect to the Google Spreadsheet
-SCOPE = [ 
-    "https://www.googleapis.com/auth/spreadsheets", 
-    "https://www.googleapis.com/auth/drive.file", 
-    "https://www.googleapis.com/auth/drive" 
-    ] 
+SCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive"
+    ]
 
 # Add Credentials
-CREDS = Credentials.from_service_account_file('creds.json') 
-SCOPED_CREDS = CREDS.with_scopes(SCOPE) 
-GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS) 
+CREDS = Credentials.from_service_account_file('creds.json')
+SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 
-# Open the spreadsheet 
+# Open the spreadsheet
 SHEET = GSPREAD_CLIENT.open('remote_working_survey')
-# Select a single worksheet 
+# Select a single worksheet
 RESPONSES_SHEET = SHEET.worksheet('responses')
 DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
 
 """ Functions """
- 
-def collect_survey_responses(questions): 
-    """ Function to collect survey responses """ 
+
+
+def collect_survey_responses(questions):
+    """
+    Function to collect survey responses
+    """
     responses = {}
 
-    """ A for loop to iterate through each question and present it to the user 
-    using the input function, and then validiate the user's input based on the  
-    provided validation function """ 
-    for question_id, question, validation_function in questions: 
-        print(question) 
-        user_response = validation_function(question) 
-        responses[question_id] = user_response 
+    """ A for loop to iterate through each question and present it to the user
+    using the input function, and then validiate the user's input based on the
+    provided validation function """
+    for question_id, question, validation_function in questions:
+        print(question)
+        user_response = validation_function(question)
+        responses[question_id] = user_response
 
-    print(responses) 
-    return responses 
+    print(responses)
+    return responses
+
 
 def validate_numeric_input(num):
-    """ Function to validate numeric input """
+    """
+    Function to validate numeric input
+    """
     while True:
         try:
             user_input = int(input(num))
@@ -46,8 +52,11 @@ def validate_numeric_input(num):
         except ValueError:
             print("Please enter a valid numeric value\n")
 
+
 def validate_input_range(num, min_value, max_value):
-    """ Function to validate input within a specified range """
+    """
+    Function to validate input within a specified range
+    """
     while True:
         # Ensure first that the input is an int
         user_input = validate_numeric_input(num)
@@ -60,16 +69,17 @@ def validate_input_range(num, min_value, max_value):
         except ValueError:
             print("Please enter a valid numeric value\n")
 
+
 def update_worksheet(data, worksheet_name):
     """ Function to update a specified worksheet with new data and
-    appropriately handles both worksheets based on their unique 
+    appropriately handles both worksheets based on their unique
     requirements """
-    
+
     worksheet = SHEET.worksheet(worksheet_name)
 
     if worksheet_name == 'responses':
         # Map numeric responses to their corresponding labels and append
-        mapped_data = [LABELS.get(key, {}).get(value, value) for key, value in data.items()] 
+        mapped_data = [LABELS.get(key, {}).get(value, value) for key, value in data.items()]
         worksheet.append_row(mapped_data)
 
     elif worksheet_name == 'data_analysis':
@@ -81,7 +91,7 @@ def update_worksheet(data, worksheet_name):
         # Initialize a list to store formatted rows
         formatted_rows = []
         for key, values in data.items():
-            if isinstance(values, dict):  
+            if isinstance(values, dict):
                 # For data with subcategories
                 for sub_key, sub_value in values.items():
                     formatted_rows.append([f"{key} - {sub_key}", sub_value])
@@ -91,19 +101,25 @@ def update_worksheet(data, worksheet_name):
         worksheet.insert_rows(formatted_rows, 2)
     print(f"{worksheet_name} worksheet updated successfully\n")
 
+
 def fetch_data(sheet):
-    """ Function to get all data from a particular
-    worksheet, excluding the header row """
+    """
+    Function to get all data from a particular
+    worksheet, excluding the header row
+    """
     return sheet.get_all_records(default_blank=0)
 
+
 def analyze_data(all_responses):
-    """ Function to perform analysis on all survey responses """
+    """
+    Function to perform analysis on all survey responses
+    """
     analysis_results = {}
     num_responses = len(all_responses)
 
     print("Responses Data is being analyzed ...\n")
 
-    # Calculate percentage of 'Yes' and 'No' responses for work_life_balance_challenges and productivity_improvement 
+    # Calculate percentage of 'Yes' and 'No' responses for work_life_balance_challenges and productivity_improvement
     yes_no_questions = ['work_life_balance_challenges', 'productivity_improvement']
     for question in yes_no_questions:
         yes_count = sum(1 for response in all_responses if response.get(question) == 'Yes')
@@ -120,11 +136,10 @@ def analyze_data(all_responses):
         analysis_results[f'{question} Yes Percentage'] = yes_percentage
         analysis_results[f'{question} No Percentage'] = no_percentage
 
-   
     # Satisfaction Analysis
     satisfaction_counts = {label: sum(1 for response in all_responses if response.get('satisfaction') == label) for label in LABELS['satisfaction'].values()}
     analysis_results['Satisfaction Counts'] = satisfaction_counts
-   
+
     # Remote Work Setup Analysis
     remote_work_setup_counts = {label: sum(1 for response in all_responses if response.get('remote_work_setup') == label) for label in LABELS['remote_work_setup'].values()}
     analysis_results['Remote Work Setup Counts'] = remote_work_setup_counts
@@ -164,7 +179,7 @@ def analyze_data(all_responses):
     analysis_results['Average Experience Years'] = average_experience_years
 
     # Convert textual responses to numeric values
-    satisfaction_numeric = [1 if res['satisfaction'] == 'Very Satisfied' else 
+    satisfaction_numeric = [1 if res['satisfaction'] == 'Very Satisfied' else
                             2 if res['satisfaction'] == 'Satisfied' else
                             3 if res['satisfaction'] == 'Neutral' else
                             4 if res['satisfaction'] == 'Dissatisfied' else
@@ -186,7 +201,7 @@ def analyze_data(all_responses):
 
 """ This is the questions list. Each question is represented as a tuple,
 where the first element is a unique identifier for the question, the second
-element is the text of the question, and the third element is a validation 
+element is the text of the question, and the third element is a validation
 function """
 
 questions = [
@@ -215,21 +230,18 @@ LABELS = {
 
 
 def main():
-    """ Run all program functions """
+    """
+    Run all program functions
+    """
     responses = collect_survey_responses(questions)
     update_worksheet(responses, 'responses')
     all_responses = fetch_data(RESPONSES_SHEET)
     analysis_results = analyze_data(all_responses)
     update_worksheet(analysis_results, 'data_analysis')
 
-    
 
 print("Welcome to Remote Working Survey Analysis\n")
 
 # Ensure to be executed only when the script is run directly
 if __name__ == "__main__":
     main()
-
-
-
-
