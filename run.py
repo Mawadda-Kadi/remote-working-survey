@@ -187,6 +187,32 @@ def analyze_data(all_responses):
     return analysis_results
 
 
+def (analysis_results):
+    """
+    Function to print the analysis report through iterating over the
+    analysis_results dictionary. For each entry:
+    If the value is a dictionary (for categories with subcategories),
+    the category and then each subcategory are printed with its count.
+    If the value is a single number,
+    the category and its value are printed directly.
+    """
+    print("Survey Analysis Report")
+    print("======================\n")
+
+    for key, value in analysis_results.items():
+        if isinstance(value, dict):
+            print(f"{key}:")
+            for sub_key, sub_value in value.items():
+                print(f"  - {sub_key}: {sub_value}")
+        else:
+            print(f"{key}: {value}")
+
+        #Separator line
+        print("----------------------------------")
+
+    print("\nEnd of Report\n")
+
+
 """ Survey Questions and Validation """
 
 """ This is the questions list. Each question is represented as a tuple,
@@ -224,11 +250,12 @@ def main():
     """
     Run all program functions
     """
-    responses = collect_survey_responses(questions)
-    update_worksheet(responses, 'responses')
+    #responses = collect_survey_responses(questions)
+    #update_worksheet(responses, 'responses')
     all_responses = fetch_data(RESPONSES_SHEET)
     analysis_results = analyze_data(all_responses)
     update_worksheet(analysis_results, 'data_analysis')
+    print_analysis_report(analysis_results)
 
 
 # Ensure to be executed only when the script is run directly
@@ -245,7 +272,7 @@ if __name__ == "__main__":
     RESPONSES_SHEET = SHEET.worksheet('responses')
     DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
 
-    print("Welcome to Remote Working Survey Analysis\n")
+    print("\nWelcome to Remote Working Survey Analysis\n")
 
     # Program Exit
     exit_survey = False
