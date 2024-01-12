@@ -22,12 +22,17 @@ def collect_survey_responses(questions):
     """ A for loop to iterate through each question and present it to
     the user using the input function, and then validiate the user's
     input based on the provided validation function """
+
     for question_id, question, validation_function in questions:
         print(question)
         user_response = validation_function(question)
         responses[question_id] = user_response
+        print("\n--------------------------\n")
 
+    print("\nSurvey Responses")
+    print("================\n")
     print(responses)
+    print("-------------------------\n")
     return responses
 
 
@@ -40,7 +45,7 @@ def validate_numeric_input(prompt):
             user_input = int(input(""))
             return user_input
         except ValueError:
-            print("Please enter a valid numeric value\n")
+            print("\nPlease enter a valid numeric value")
 
 
 def validate_input_range(prompt, min_value, max_value):
@@ -55,9 +60,9 @@ def validate_input_range(prompt, min_value, max_value):
             if min_value <= user_input <= max_value:
                 return user_input
             else:
-                print(f"Please enter a value between {min_value} and {max_value}\n")
+                print(f"\nPlease enter a value between {min_value} and {max_value}")
         except ValueError:
-            print("Please enter a valid numeric value\n")
+            print("\nPlease enter a valid numeric value")
 
 
 def update_worksheet(data, worksheet_name):
@@ -187,7 +192,7 @@ def analyze_data(all_responses):
     return analysis_results
 
 
-def (analysis_results):
+def print_analysis_report(analysis_results):
     """
     Function to print the analysis report through iterating over the
     analysis_results dictionary. For each entry:
@@ -221,7 +226,7 @@ element is the text of the question, and the third element is a validation
 function """
 
 questions = [
-    ("employee_id", "Please enter your employee ID (numeric format only): ", validate_numeric_input),
+    ("employee_id", "Please enter your employee ID (numeric format only): \n", validate_numeric_input),
     ("satisfaction", "How would you rate your overall satisfaction with working from home?\n1. Very Satisfied\n2. Satisfied\n3. Neutral\n4. Dissatisfied\n5. Very Dissatisfied\n", lambda x: validate_input_range("Enter your choice (1-5): ", 1, 5)),
     ("remote_work_setup", "Which of the following best describes your remote work setup?\n1. Dedicated home office\n2. Shared workspace with others\n3. No dedicated workspace\n", lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3)),
     ("technical_issues", "How often do you encounter technical issues while working from home?\n1. Rarely or never\n2. Occasionally\n3. Frequently\n", lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3)),
@@ -250,8 +255,8 @@ def main():
     """
     Run all program functions
     """
-    #responses = collect_survey_responses(questions)
-    #update_worksheet(responses, 'responses')
+    responses = collect_survey_responses(questions)
+    update_worksheet(responses, 'responses')
     all_responses = fetch_data(RESPONSES_SHEET)
     analysis_results = analyze_data(all_responses)
     update_worksheet(analysis_results, 'data_analysis')
@@ -278,5 +283,5 @@ if __name__ == "__main__":
     exit_survey = False
     while exit_survey is False:
         main()
-        user_input = input("Thank you for your participation, enter 'exit' to close the program, any key to restart: \n")
+        user_input = input("Thank you for your participation.\nEnter 'exit' to close the program, any key to restart: \n")
         exit_survey = user_input.lower() == 'exit'
