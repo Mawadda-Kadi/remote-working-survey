@@ -96,6 +96,24 @@ def analyze_data(all_responses):
     num_responses = len(all_responses)
 
     print("Responses Data is being analyzed ...\n")
+
+    # Calculate percentage of 'Yes' and 'No' responses for work_life_balance_challenges and productivity_improvement 
+    yes_no_questions = ['work_life_balance_challenges', 'productivity_improvement']
+    for question in yes_no_questions:
+        yes_count = sum(1 for response in all_responses if response.get(question) == 'Yes')
+        no_count = sum(1 for response in all_responses if response.get(question) == 'No')
+        total = yes_count + no_count
+
+        # Avoid division by zero
+        if total > 0:
+            yes_percentage = (yes_count / total) * 100
+            no_percentage = (no_count / total) * 100
+        else:
+            yes_percentage = no_percentage = 0
+
+        analysis_results[f'{question} Yes Percentage'] = yes_percentage
+        analysis_results[f'{question} No Percentage'] = no_percentage
+
    
     # Satisfaction Analysis
     satisfaction_counts = {label: sum(1 for response in all_responses if response.get('satisfaction') == label) for label in LABELS['satisfaction'].values()}
