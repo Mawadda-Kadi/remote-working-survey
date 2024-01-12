@@ -236,7 +236,6 @@ questions = [
     ("average_daily_work_hours", "On average, how many hours per day do you work remotely? [Numeric value in hours]\n", lambda x: validate_input_range("Enter the number of hours: ", 1, 24)),
     ("work_duration", "How long have you worked remotely?\n1. Less than 6 months\n2. 6 months to 1 year\n3. 1 year to 2 years\n4. More than 2 years\n", lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
     ("experience_years", "How many years of experience do you have in your current role? [Value in years]\n", lambda x: validate_input_range("Enter the number of years: ", 0, 60))
-
 ]
 
 # Define a dictionary to map numeric responses to labels
