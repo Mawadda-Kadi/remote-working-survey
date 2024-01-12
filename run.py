@@ -35,6 +35,7 @@ def collect_survey_responses(questions):
         print(question) 
         user_response = validation_function(question) 
         responses[question_id] = user_response 
+
     print(responses) 
     return responses 
 
@@ -72,6 +73,11 @@ def update_worksheet(data, worksheet):
     worksheet_to_update = SHEET.worksheet(worksheet)
     worksheet_to_update.append_row(mapped_data)
     print(f"{worksheet} worksheet updated successfully\n")
+
+def fetch_data(sheet):
+    return sheet.get_all_records()
+
+
 
 
 """ Survey Questions and Validation """
@@ -113,6 +119,7 @@ def main():
     """ Run all program functions """
     responses = collect_survey_responses(questions)
     update_worksheet(responses, 'questions&responses')
+    fetch_data(RESPONSES_SHEET)
 
 print("Welcome to Remote Working Survey Analysis")
 main()
