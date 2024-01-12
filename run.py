@@ -9,6 +9,7 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
     ]
 
+
 """ Functions """
 
 
@@ -18,9 +19,9 @@ def collect_survey_responses(questions):
     """
     responses = {}
 
-    """ A for loop to iterate through each question and present it to the user
-    using the input function, and then validiate the user's input based on the
-    provided validation function """
+    """ A for loop to iterate through each question and present it to
+    the user using the input function, and then validiate the user's
+    input based on the provided validation function """
     for question_id, question, validation_function in questions:
         print(question)
         user_response = validation_function(question)
@@ -36,7 +37,7 @@ def validate_numeric_input(num):
     """
     while True:
         try:
-            user_input = int(input(num))
+            user_input = int(input(""))
             return user_input
         except ValueError:
             print("Please enter a valid numeric value\n")
@@ -229,7 +230,6 @@ def main():
     update_worksheet(analysis_results, 'data_analysis')
 
 
-print("Welcome to Remote Working Survey Analysis\n")
 
 # Ensure to be executed only when the script is run directly
 if __name__ == "__main__":
@@ -244,6 +244,7 @@ if __name__ == "__main__":
     # Select a single worksheet
     RESPONSES_SHEET = SHEET.worksheet('responses')
     DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
+    
     print("Welcome to Remote Working Survey Analysis\n")
 
     # Program Exit
