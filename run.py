@@ -75,7 +75,64 @@ def update_worksheet(data, worksheet):
     print(f"{worksheet} worksheet updated successfully\n")
 
 def fetch_data(sheet):
+    """ Function to get all data from a particular worksheet """
     return sheet.get_all_records()
+
+def analyze_data(all_responses):
+    """ Function to perform analysis on all survey responses """
+    analysis_results = {}
+    num_responses = len(all_responses)
+
+    print("Responses Data is being analyzed ...\n")
+   
+    # Satisfaction Analysis
+    satisfaction_counts = {label: sum(1 for response in all_responses if response.get('satisfaction') == label) for label in LABELS['satisfaction'].values()}
+    analysis_results['Satisfaction Counts'] = satisfaction_counts
+   
+    # Remote Work Setup Analysis
+    remote_work_setup_counts = {label: sum(1 for response in all_responses if response.get('remote_work_setup') == label) for label in LABELS['remote_work_setup'].values()}
+    analysis_results['Remote Work Setup Counts'] = remote_work_setup_counts
+
+    # Technical Issues Analysis
+    technical_issues_counts = {label: sum(1 for response in all_responses if response.get('technical_issues') == label) for label in LABELS['technical_issues'].values()}
+    analysis_results['Technical Issues Counts'] = technical_issues_counts
+
+    # Work-Life Balance Challenges Analysis
+    work_life_balance_counts = {label: sum(1 for response in all_responses if response.get('work_life_balance_challenges') == label) for label in LABELS['work_life_balance_challenges'].values()}
+    analysis_results['Work-Life Balance Challenges Counts'] = work_life_balance_counts
+
+    # Productivity Improvement Analysis
+    productivity_improvement_counts = {label: sum(1 for response in all_responses if response.get('productivity_improvement') == label) for label in LABELS['productivity_improvement'].values()}
+    analysis_results['Productivity Improvement Counts'] = productivity_improvement_counts
+
+    # Work Model Preference Analysis
+    work_model_preference_counts = {label: sum(1 for response in all_responses if response.get('work_model_preference') == label) for label in LABELS['work_model_preference'].values()}
+    analysis_results['Work Model Preference Counts'] = work_model_preference_counts
+
+    # Average Daily Work Hours Analysis
+    try:
+        total_work_hours = sum(int(response.get('average_daily_work_hours', 0)) for response in all_responses)
+        average_daily_work_hours = total_work_hours / num_responses if num_responses > 0 else 0
+    except ValueError:
+        print("Error: Non-numeric data found in 'average_daily_work_hours'")
+        average_daily_work_hours = None
+
+    analysis_results['Average Daily Work Hours'] = average_daily_work_hours
+
+    # Work Duration Analysis
+    work_duration_counts = {label: sum(1 for response in all_responses if response.get('work_duration') == label) for label in LABELS['work_duration'].values()}
+    analysis_results['Work Duration Counts'] = work_duration_counts
+
+    # Experience Years Analysis
+    total_experience_years = sum(response.get('experience_years', 0) for response in all_responses)
+    average_experience_years = total_experience_years / num_responses if num_responses > 0 else 0
+    analysis_results['Average Experience Years'] = average_experience_years
+    
+    print(analysis_results)
+
+    print("Responses Data is analyzed successfully\n")
+
+    return analysis_results
 
 
 
@@ -119,9 +176,13 @@ def main():
     """ Run all program functions """
     responses = collect_survey_responses(questions)
     update_worksheet(responses, 'questions&responses')
-    fetch_data(RESPONSES_SHEET)
+    all_responses = fetch_data(RESPONSES_SHEET)
+    analyze_data(all_responses)
 
 print("Welcome to Remote Working Survey Analysis")
-main()
+
+# Ensure to be executed only when the script is run directly
+if __name__ == "__main__":
+    main()
 
 
