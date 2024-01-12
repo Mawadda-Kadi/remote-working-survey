@@ -64,21 +64,35 @@ def validate_input_range(num, min_value, max_value):
             print("Please enter a valid numeric value\n")
 
 def update_worksheet(data, worksheet_name):
+    """  Function to update a specified worksheet with new data """
+
+    """ If it is the 'data_analysis' worksheet, it first clears existing data,
+    preserving the first row (header). It then formats and inserts new data
+    into the worksheet, starting from the second row. The data is formatted
+    depending on its type: dictionary values are broken down into individual rows,
+    while single numeric values are inserted directly """
+
     worksheet = SHEET.worksheet(worksheet_name)
     
     if worksheet_name == 'data_analysis':
-        # Clear the existing data in the worksheet
-        worksheet.clear()
+        # Get the total number of rows in the worksheet
+        total_rows = len(worksheet.get_all_values())
+        if total_rows > 1:
+            # Clear the existing data in the worksheet, except the first row
+            range_to_clear = f'A2:Z{total_rows}'
+            worksheet.batch_clear([range_to_clear])
 
     # Initialize a list to store formatted rows
     formatted_rows = []
 
     # Iterate through each key-value pair in the data dictionary
     for key, values in data.items():
-        if isinstance(values, dict):  # For data with subcategories
+        if isinstance(values, dict):  
+            # For data with subcategories
             for sub_key, sub_value in values.items():
                 formatted_rows.append([f"{key} - {sub_key}", sub_value])
-        else:  # For single numeric values
+        else:  
+            # For single numeric values
             formatted_rows.append([key, values])
 
     # Insert the formatted rows into the worksheet, starting from the second row
@@ -208,14 +222,11 @@ LABELS = {
     'work_duration': {1: 'Less than 6 months', 2: '6 months to 1 year', 3: '1 year to 2 years', 4: 'More than 2 years'}
 }
 
-""" Write responses to the sheet """
-#response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "work_duration", "experience_years"]}
-#update_worksheet(response_values, 'questions&responses')
 
 def main():
     """ Run all program functions """
-    #responses = collect_survey_responses(questions)
-    #update_worksheet(responses, 'questions&responses')
+    responses = collect_survey_responses(questions)
+    update_worksheet(responses, 'questions&responses')
     all_responses = fetch_data(RESPONSES_SHEET)
     analysis_results = analyze_data(all_responses)
     update_worksheet(analysis_results, 'data_analysis')
