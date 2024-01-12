@@ -31,7 +31,7 @@ def collect_survey_responses(questions):
     return responses
 
 
-def validate_numeric_input(num):
+def validate_numeric_input(prompt):
     """
     Function to validate numeric input
     """
@@ -43,13 +43,13 @@ def validate_numeric_input(num):
             print("Please enter a valid numeric value\n")
 
 
-def validate_input_range(num, min_value, max_value):
+def validate_input_range(prompt, min_value, max_value):
     """
     Function to validate input within a specified range
     """
     while True:
         # Ensure first that the input is an int
-        user_input = validate_numeric_input(num)
+        user_input = validate_numeric_input(prompt)
         # Ensure that the input is within the specified range
         try:
             if min_value <= user_input <= max_value:
@@ -204,7 +204,8 @@ questions = [
     ("work_model_preference", "Would you prefer a hybrid work model (a mix of remote and in-office work) in the future?\n1. Yes, I prefer a hybrid model\n2. No, I prefer fully remote work\n3. No, I prefer fully in-office work\n4. Undecided\n", lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
     ("average_daily_work_hours", "On average, how many hours per day do you work remotely? [Numeric value in hours]\n", lambda x: validate_input_range("Enter the number of hours: ", 1, 24)),
     ("work_duration", "How long have you worked remotely?\n1. Less than 6 months\n2. 6 months to 1 year\n3. 1 year to 2 years\n4. More than 2 years\n", lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
-    ("experience_years", "How many years of experience do you have in your current role? [Positive integer value]\n", lambda x: validate_input_range("Enter the number of years: ", 1, float('inf')))
+    ("experience_years", "How many years of experience do you have in your current role? [Value in years]\n", lambda x: validate_input_range("Enter the number of years: ", 0, 60))
+
 ]
 
 # Define a dictionary to map numeric responses to labels
@@ -230,7 +231,6 @@ def main():
     update_worksheet(analysis_results, 'data_analysis')
 
 
-
 # Ensure to be executed only when the script is run directly
 if __name__ == "__main__":
 
@@ -244,13 +244,12 @@ if __name__ == "__main__":
     # Select a single worksheet
     RESPONSES_SHEET = SHEET.worksheet('responses')
     DATA_ANALYSIS_SHEET = SHEET.worksheet('data_analysis')
-    
+
     print("Welcome to Remote Working Survey Analysis\n")
 
     # Program Exit
     exit_survey = False
     while exit_survey is False:
         main()
-        user_input = input("Thank you for your participation,\n"
-                "enter 'exit' to close the program, any key to restart: "/n1)
+        user_input = input("Thank you for your participation, enter 'exit' to close the program, any key to restart: \n")
         exit_survey = user_input.lower() == 'exit'
