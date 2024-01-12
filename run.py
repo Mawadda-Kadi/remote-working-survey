@@ -23,6 +23,20 @@ response_data = RESPONSES_SHEET.get_all_values()
 analysis_data = DATA_ANALYSIS_SHEET.get_all_values() 
 
 """ Functions """
+ 
+def collect_survey_responses(questions): 
+    """ Function to collect survey responses """ 
+    responses = {}
+
+    """ A for loop to iterate through each question and present it to the user 
+    using the input function, and then validiate the user's input based on the  
+    provided validation function """ 
+    for question_id, question, validation_function in questions: 
+        print(question) 
+        user_response = validation_function(question) 
+        responses[question_id] = user_response 
+    print(responses) 
+    return responses 
 
 def validate_numeric_input(num):
     """ Function to validate numeric input """
@@ -91,25 +105,16 @@ LABELS = {
     'work_duration': {1: 'Less than 6 months', 2: '6 months to 1 year', 3: '1 year to 2 years', 4: 'More than 2 years'}
 }
 
-# Collect survey responses
-responses = {}
-
-""" to iterate through each question and present it to the user using
-the input function, and then validiate the user's input based on the 
-provided validation function """
-
-for question_id, question, validation_function in questions:
-    print(question)
-    user_response = validation_function(question)
-    responses[question_id] = user_response
-
-print(responses)
-
 """ Write responses to the sheet """
-response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "work_duration", "experience_years"]}
-update_worksheet(response_values, 'questions&responses')
+#response_values = {key: responses.get(key, "") for key in ["employee_id", "satisfaction", "remote_work_setup", "technical_issues", "work_life_balance_challenges", "productivity_improvement", "work_model_preference", "average_daily_work_hours", "work_duration", "experience_years"]}
+#update_worksheet(response_values, 'questions&responses')
 
-print("Survey response recorded successfully...\n")
+def main():
+    """ Run all program functions """
+    responses = collect_survey_responses(questions)
+    update_worksheet(responses, 'questions&responses')
 
+print("Welcome to Remote Working Survey Analysis")
+main()
 
 
