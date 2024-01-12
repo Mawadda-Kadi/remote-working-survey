@@ -1,5 +1,6 @@
 import gspread 
-from google.oauth2.service_account import Credentials 
+from google.oauth2.service_account import Credentials
+from scipy.stats import pearsonr
 
 # Connect to the Google Spreadsheet
 SCOPE = [ 
@@ -156,6 +157,20 @@ def analyze_data(all_responses):
     analysis_results['Average Experience Years'] = average_experience_years
 
     analysis_results['Average Experience Years'] = average_experience_years
+
+    # Convert textual responses to numeric values
+    satisfaction_numeric = [1 if res['satisfaction'] == 'Very Satisfied' else 
+                            2 if res['satisfaction'] == 'Satisfied' else
+                            3 if res['satisfaction'] == 'Neutral' else
+                            4 if res['satisfaction'] == 'Dissatisfied' else
+                            5 for res in all_responses]
+
+    productivity_numeric = [1 if res['productivity_improvement'] == 'Yes' else 0 for res in all_responses]
+
+    # Calculate correlation
+    if satisfaction_numeric and productivity_numeric:
+        correlation = pearsonr(satisfaction_numeric, productivity_numeric)[0]
+        analysis_results['Satisfaction-Productivity Improvement Correlation'] = correlation
 
     print("Responses Data analyzed successfully\n")
 
