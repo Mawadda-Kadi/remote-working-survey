@@ -75,8 +75,9 @@ def update_worksheet(data, worksheet):
     print(f"{worksheet} worksheet updated successfully\n")
 
 def fetch_data(sheet):
-    """ Function to get all data from a particular worksheet """
-    return sheet.get_all_records()
+    """ Function to get all data from a particular
+    worksheet, excluding the header row """
+    return sheet.get_all_records(default_blank=0)
 
 def analyze_data(all_responses):
     """ Function to perform analysis on all survey responses """
@@ -110,12 +111,9 @@ def analyze_data(all_responses):
     analysis_results['Work Model Preference Counts'] = work_model_preference_counts
 
     # Average Daily Work Hours Analysis
-    try:
-        total_work_hours = sum(int(response.get('average_daily_work_hours', 0)) for response in all_responses)
-        average_daily_work_hours = total_work_hours / num_responses if num_responses > 0 else 0
-    except ValueError:
-        print("Error: Non-numeric data found in 'average_daily_work_hours'")
-        average_daily_work_hours = None
+    total_work_hours = sum(response.get('average_daily_work_hours', 0) for response in all_responses)
+    average_daily_work_hours = total_work_hours / num_responses if num_responses > 0 else 0
+    analysis_results['Average Daily Work Hours'] = average_daily_work_hours
 
     analysis_results['Average Daily Work Hours'] = average_daily_work_hours
 
@@ -127,7 +125,9 @@ def analyze_data(all_responses):
     total_experience_years = sum(response.get('experience_years', 0) for response in all_responses)
     average_experience_years = total_experience_years / num_responses if num_responses > 0 else 0
     analysis_results['Average Experience Years'] = average_experience_years
-    
+
+    analysis_results['Average Experience Years'] = average_experience_years
+
     print(analysis_results)
 
     print("Responses Data is analyzed successfully\n")
@@ -174,8 +174,8 @@ LABELS = {
 
 def main():
     """ Run all program functions """
-    responses = collect_survey_responses(questions)
-    update_worksheet(responses, 'questions&responses')
+    #responses = collect_survey_responses(questions)
+    #update_worksheet(responses, 'questions&responses')
     all_responses = fetch_data(RESPONSES_SHEET)
     analyze_data(all_responses)
 
