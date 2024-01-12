@@ -62,17 +62,28 @@ def validate_input_range(num, min_value, max_value):
         except ValueError:
             print("Please enter a valid numeric value\n")
 
-def update_worksheet(data, worksheet):
-    """
-    Receives a list of responses to be inserted into a worksheet
-    Update the relevant worksheet with the data provided
-    """
-    # Map numeric responses to their corresponding labels
-    mapped_data = [LABELS.get(key, {}).get(value, value) for key, value in data.items()]
-    print(f"Updating {worksheet} worksheet...\n")
-    worksheet_to_update = SHEET.worksheet(worksheet)
-    worksheet_to_update.append_row(mapped_data)
-    print(f"{worksheet} worksheet updated successfully\n")
+def update_worksheet(data, worksheet_name):
+    worksheet = SHEET.worksheet(worksheet_name)
+    
+    if worksheet_name == 'data_analysis':
+        # Clear the existing data in the worksheet
+        worksheet.clear()
+
+    # Initialize a list to store formatted rows
+    formatted_rows = []
+
+    # Iterate through each key-value pair in the data dictionary
+    for key, values in data.items():
+        if isinstance(values, dict):  # For data with subcategories
+            for sub_key, sub_value in values.items():
+                formatted_rows.append([f"{key} - {sub_key}", sub_value])
+        else:  # For single numeric values
+            formatted_rows.append([key, values])
+
+    # Insert the formatted rows into the worksheet, starting from the second row
+    worksheet.insert_rows(formatted_rows, 2)
+
+    print(f"{worksheet_name} worksheet updated successfully")
 
 def fetch_data(sheet):
     """ Function to get all data from a particular
@@ -128,13 +139,9 @@ def analyze_data(all_responses):
 
     analysis_results['Average Experience Years'] = average_experience_years
 
-    print(analysis_results)
-
-    print("Responses Data is analyzed successfully\n")
+    print("Responses Data analyzed successfully\n")
 
     return analysis_results
-
-
 
 
 """ Survey Questions and Validation """
@@ -177,12 +184,17 @@ def main():
     #responses = collect_survey_responses(questions)
     #update_worksheet(responses, 'questions&responses')
     all_responses = fetch_data(RESPONSES_SHEET)
-    analyze_data(all_responses)
+    analysis_results = analyze_data(all_responses)
+    update_worksheet(analysis_results, 'data_analysis')
 
-print("Welcome to Remote Working Survey Analysis")
+    
+
+print("Welcome to Remote Working Survey Analysis\n")
 
 # Ensure to be executed only when the script is run directly
 if __name__ == "__main__":
     main()
+
+
 
 
