@@ -396,7 +396,7 @@ if __name__ == "__main__":
 
     print("\nWelcome to Remote Working Survey Analysis\n")
 
-    # Program Exit
+    # Program Exit # Credit: to my mentor, Antonio Rodriguez
     exit_survey = False
     while exit_survey is False:
         main()
