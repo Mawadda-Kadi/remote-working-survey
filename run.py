@@ -272,54 +272,54 @@ function """
 
 questions = [
     ("employee_id",
-     "Please enter your employee ID (numeric format only): \n",
+     " Please enter your employee ID (numeric format only): \n",
      validate_numeric_input),
 
     ("satisfaction",
-     "How would you rate your overall satisfaction with working from home?\n"
+     " How would you rate your overall satisfaction with working from home?\n"
      "1. Very Satisfied\n2. Satisfied\n3. Neutral\n4. Dissatisfied\n5. Very "
      "Dissatisfied\n",
      lambda x: validate_input_range("Enter your choice (1-5): ", 1, 5)),
 
     ("remote_work_setup",
-     "Which of the following best describes your remote work setup?\n"
+     " Which of the following best describes your remote work setup?\n"
      "1. Dedicated home office\n2. Shared workspace with others\n"
      "3. No dedicated workspace\n",
      lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3)),
 
     ("technical_issues",
-     "How often do you encounter technical issues while working from home?\n"
+     " How often do you encounter technical issues while working from home?\n"
      "1. Rarely or never\n2. Occasionally\n3. Frequently\n",
      lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3)),
 
     ("work_life_balance_challenges",
-     "Have you experienced challenges in maintaining work-life balance while "
-     "working from home?\n1. Yes\n2. No\n",
+     " Have you experienced challenges in maintaining work-life balance while "
+     "\nworking from home?\n1. Yes\n2. No\n",
      lambda x: validate_input_range("Enter your choice (1-2): ", 1, 2)),
 
     ("productivity_improvement",
-     "Have you experienced an improvement in your productivity since working "
-     "from home?\n1. Yes\n2. No\n3. No change\n",
+     " Have you experienced an improvement in your productivity since working "
+     "\nfrom home?\n1. Yes\n2. No\n3. No change\n",
      lambda x: validate_input_range("Enter your choice (1-3): ", 1, 3)),
 
     ("work_model_preference",
-     "Would you prefer a hybrid work model (mix of remote and in-office work)"
-     " in the future?\n1. Yes, I prefer a hybrid model\n2. No, I prefer fully "
-     "remote work\n3. No, I prefer fully in-office work\n4. Undecided\n",
+     " Would you prefer a hybrid work model (mix of remote and in-office work)"
+     " \nin the future?\n1. Yes, I prefer a hybrid model\n2. No, I prefer "
+     "fully remote work\n3. No, I prefer fully in-office work\n4. Undecided\n",
      lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
 
     ("average_daily_work_hours",
-     "On average, how many hours per day do you work remotely? [Numeric value"
-     " in hours]\n",
+     " On average, how many hours per day do you work remotely? [Numeric "
+     " \nvalue in hours]\n",
      lambda x: validate_input_range("Enter the number of hours: ", 1, 24)),
 
     ("work_duration",
-     "How long have you worked remotely?\n1. Less than 6 months\n2. 6 months"
+     " How long have you worked remotely?\n1. Less than 6 months\n2. 6 months"
      " to 1 year\n3. 1 year to 2 years\n4. More than 2 years\n",
      lambda x: validate_input_range("Enter your choice (1-4): ", 1, 4)),
 
     ("experience_years",
-     "How many years of experience do you have in your current role? [Value"
+     " How many years of experience do you have in your current role? [Value"
      " in years]\n",
      lambda x: validate_input_range("Enter the number of years: ", 0, 60))
 ]
